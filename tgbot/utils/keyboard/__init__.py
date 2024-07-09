@@ -13,6 +13,7 @@ def menu_note() -> InlineKeyboardMarkup:
     kb.button(text="Изменение заметки", callback_data="edit-note")
     kb.button(text="Удаление заметки", callback_data="delete-note")
     kb.button(text="Генерация изображения", callback_data="generate-image")
+    kb.button(text="Запостить на Telegraph", callback_data="upload-to-telegraph")
     return kb.adjust(1).as_markup()
 
 

@@ -1,6 +1,7 @@
 from aiogram import Bot, Dispatcher
 import asyncio
 
+from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import BotCommand
 
 import config
@@ -26,8 +27,7 @@ async def start_bot() -> None:
             BotCommand(command="list", description="Вывод всех заметок"),
         ]
     )
-    dp = Dispatcher()
-
+    dp = Dispatcher(storage=MemoryStorage())
     # Include routers
     dp.include_routers(
         user.router

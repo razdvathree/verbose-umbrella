@@ -6,6 +6,7 @@ from tgbot.utils.database import get_note, delete_note, edit_note
 from tgbot.utils.downloader_photo import download_photo_from_url
 from tgbot.utils.generate_image import add_text_to_image_with_brightness
 from tgbot.utils.keyboard import menu_note
+from tgbot.utils.telegraph_uploader import telegraph_uploader
 
 
 async def view_note_handler(callback: CallbackQuery, state: FSMContext):
@@ -80,3 +81,14 @@ async def download_photo_handler(message: Message, state: FSMContext):
     else:
         await message.answer("Вернитесь к /start")
         return
+
+
+async def upload_to_telegraph_handler(callback: CallbackQuery, state: FSMContext):
+    data: dict = await state.get_data()
+    note_id: int = data.get("note_id")
+    note_content = get_note(note_id)
+    url_tele = await telegraph_uploader(note_content, note_id)
+    if note_id is not None and url_tele is not None:
+        await callback.message.edit_text(f"Ссылка на заметку:\n{url_tele}", reply_markup=menu_note())
+    else:
+        await callback.message.edit_text("Вернитесь к /start")

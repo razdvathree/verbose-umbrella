@@ -6,6 +6,7 @@ from tgbot.utils.database import create_note, get_all_notes, delete_note, get_no
 from tgbot.utils.downloader_photo import download_photo_from_url
 from tgbot.utils.generate_image import add_text_to_image_with_brightness
 from tgbot.utils.keyboard import menu_note, menu_list_notes
+from tgbot.utils.telegraph_uploader import telegraph_uploader
 
 
 async def command_new_handler(message: Message, command: CommandObject, state: FSMContext):
@@ -127,3 +128,30 @@ async def command_generate_handler(message: Message, command: CommandObject):
             await message.answer("Слишком много аргументов...")
     else:
         await message.answer("Аргументы не указаны...")
+
+
+async def command_upload_handler(message: Message, command: CommandObject):
+    # get command args
+    args: str = command.args
+    if args is not None:
+        # check amount elements in args
+        elements = args.split()
+        if len(elements) == 2:
+            try:
+                note_id: int = int(elements[0])
+                url: str = elements[1]
+                if note_id and url:
+                    note_content = get_note(note_id)
+                    # create page with note on telegraph
+                    url_tele = await telegraph_uploader(note_content, note_id)
+                    if url_tele:
+                        await message.answer(f"Ссылка на заметку #{note_id}:\n{url_tele}")
+                    else:
+                        await message.answer("Вернитесь к /start")
+            except TypeError:
+                await message.answer("Номер заметки не число!")
+        else:
+            await message.answer("Слишком много аргументов...")
+    else:
+        await message.answer("Аргументы не указаны...")
+
